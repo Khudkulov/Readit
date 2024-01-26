@@ -1,0 +1,161 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+
+{% load footer_articles %}
+{% last_two_articles as last_two_articles %}
+    <section class="hero-wrap hero-wrap-2 js-fullheight" style="background-image: url({% static 'images/bg_1.jpg' %});"
+             data-stellar-background-ratio="0.5">
+        <div class="overlay"></div>
+        <div class="container">
+            <div class="row no-gutters slider-text js-fullheight align-items-end justify-content-center">
+                <div class="col-md-9 ftco-animate pb-5 text-center">
+                    <h1 class="mb-3 bread">Blog Single</h1>
+                    <p class="breadcrumbs"><span class="mr-2"><a href="{% url 'main:home' %}">Home <i
+                            class="ion-ios-arrow-forward"></i></a></span> <span class="mr-2"><a
+                            href="{% url 'article:list' %}">Blog <i
+                            class="ion-ios-arrow-forward"></i></a></span> <span>Blog Single <i
+                            class="ion-ios-arrow-forward"></i></span></p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="ftco-section ftco-degree-bg">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 ftco-animate">
+                    <p class="mb-5">
+                        <img src="{{ object.image.url }}" alt class="img-fluid">
+                    </p>
+                    <h2 class="mb-3">{{ object.title }}</h2>
+                    <p>{{ object.content|safe }}</p>
+                    {% for foo in object.subarticles.all %}
+
+                        <h2 class="mb-3 mt-5">#{{ forloop.counter|add:'1' }}. {{ foo.title }}</h2>
+                        <p>{{ foo.header_content|safe }}</p>
+                        <p class="mb-5">
+                            <img src="{{ foo.image.url }}" alt class="img-fluid">
+                        </p>
+                        <p>{{ foo.footer_content|safe }}</p>
+                    {% endfor %}
+                    <div class="tag-widget post-tag-container mb-5 mt-5">
+                        <div class="tagcloud">
+                            {% for tag in tags.all %}
+
+                                <a href="{% url 'article:list' %}?tag={{ tag.title }}" class="tag-cloud-link">{{ tag.title }}</a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% if object.author %}
+                        <div class="about-author d-flex p-4 bg-light">
+                            <div class="bio mr-5">
+                                <img src="{{ object.author.image.url }}" alt="Image placeholder" class="img-fluid mb-4">
+                            </div>
+                            <div class="desc">
+                                <h3>{{ object.author.name }}</h3>
+                                <p>{{ object.author.bio }}</p>
+                            </div>
+                        </div>
+                    {% endif %}
+                    <div class="pt-5 mt-5">
+                        <h3 class="mb-5">{{ object.comment_set.count }} Comments</h3>
+                        <ul class="comment-list">
+                            {% for comment in object.comment_set.all|dictsortreversed:'id' %}
+                            <li class="comment">
+                                <div class="vcard bio">
+                                    <img src="{% if comment.image %}{{ comment.image.url }}{% else %}{% static 'images/24-248253_user-profile-default-image-png-clipart-png-download.png' %} {% endif %}" alt="Image placeholder">
+                                </div>
+                                <div class="comment-body">
+                                    <h3>{{ comment.name }}</h3>
+                                    <div class="meta mb-3">{{ comment.created_date|date:"F d, Y \a\t h:mA" }}</div>
+                                    <p>{{ comment.message }}</p>
+                                </div>
+                            </li>
+                              {% endfor %}
+                        </ul>
+
+                        <div class="comment-form-wrap pt-5">
+                            <h3 class="mb-5">Leave a comment</h3>
+                        <form method="post" enctype="multipart/form-data" class="p-5 bg-light">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <label for="name">Name *</label>
+                                {{ form.name }}
+                            </div>
+                            <div class="form-group">
+                                <label for="file">Image</label>
+                                {{ form.image }}
+                            </div>
+                            <div class="form-group">
+                                <label for="message">Message</label>
+                                {{ form.message }}
+                            </div>
+                                <div class="form-group">
+                                    <input type="submit" value="Post Comment" class="btn py-3 px-4 btn-primary">
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 sidebar pl-lg-5 ftco-animate">
+                    <div class="sidebar-box">
+                        <form action="{% url 'article:list' %}" method="get" class="search-form">
+                            <div class="form-group">
+                                <span class="icon icon-search"></span>
+                                <input type="text" name="q" class="form-control" placeholder="Type a keyword and hit enter">
+
+                            </div>
+                        </form>
+                    </div>
+                    <div class="sidebar-box ftco-animate">
+                        <div class="categories">
+                            <h3>Categories</h3>
+                            <li><a href="{% url 'article:list' %}">All <span
+                                    class="ion-ios-arrow-forward"></span></a></li>
+
+                            {% for category in categories %}
+                                <li><a href="{% url 'article:list' %}?cat={{ category.title }}">{{ category.title }}
+                                    <span class="ion-ios-arrow-forward"></span></a></li>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="sidebar-box ftco-animate">
+                        <h3>Recent Blog</h3>
+                        {% for last_two_article in last_two_articles %}
+
+                            <div class="block-21 mb-4 d-flex">
+                                <a class="blog-img mr-4"
+                                   style="background-image: url({{ last_two_article.image.url }});"></a>
+                                <div class="text">
+                                    <h3 class="heading"><a href="{% url 'article:detail' last_two_article.slug %}">{{ last_two_article.title }}</a></h3>
+                                    <div class="meta">
+                                        <div><a href="#"><span class="icon-calendar"></span> {{ last_two_article.created_date|date:"M d, Y" }}</a></div>
+                                        <div><a href="#"><span class="icon-person"></span> {{ last_two_article.author.name }}</a></div>
+                                        <div><a href="#"><span class="icon-chat"></span> {{ last_two_article.comment_set.count }}</a></div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <div class="sidebar-box ftco-animate">
+                        <h3>Tag Cloud</h3>
+                        <div class="tagcloud">
+                            {% for tag in tags %}
+                                
+                            <a href="{% url 'article:list' %}?tag={{ tag.title }}" class="tag-cloud-link">{{ tag.title }}</a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="sidebar-box ftco-animate">
+                        <h3>Paragraph</h3>
+                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ducimus itaque, autem
+                            necessitatibus voluptate quod mollitia delectus aut, sunt placeat nam vero culpa sapiente
+                            consectetur similique, inventore eos fugit cupiditate numquam!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

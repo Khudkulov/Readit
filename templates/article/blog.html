@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+
+    <div class="hero-wrap js-fullheight" style="background-image: url({% static 'images/bg_1.jpg' %});"
+         data-stellar-background-ratio="0.5">
+        <div class="overlay"></div>
+        <div class="container">
+            <div class="row no-gutters slider-text js-fullheight align-items-center justify-content-start"
+                 data-scrollax-parent="true">
+                <div class="col-md-12 ftco-animate">
+                    <h2 class="subheading">Hello! Welcome to</h2>
+                    <h1 class="mb-4 mb-md-0">Readit blog</h1>
+                    <div class="row">
+                        <div class="col-md-7">
+                            <div class="text">
+                                <p>Far far away, behind the word mountains, far from the countries Vokalia and
+                                    Consonantia,
+                                    there live the blind texts. Separated they live in Bookmarksgrove right at the coast
+                                    of
+                                    the Semantics, a large language ocean.</p>
+                                <div class="mouse">
+                                    <a href="{% url 'article:list' %}" class="mouse-icon">
+                                        <div class="mouse-wheel"><span class="ion-ios-arrow-round-down"></span></div>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <section class="ftco-section bg-light">
+        <div class="container">
+            <div class="row d-flex">
+                {% for object in object_list %}
+
+
+
+                    <div class="col-md-4 d-flex ftco-animate">
+                        <div class="blog-entry justify-content-end">
+                            <a href="{% url 'article:detail' object.slug %}" class="block-20"
+                               style="background-image: url({{ object.image.url }});">
+                            </a>
+                            <div class="text p-4 float-right d-block">
+                                <div class="topper d-flex align-items-center">
+                                    <div class="one py-2 pl-3 pr-1 align-self-stretch">
+                                        <span class="day">{{ object.created_date.day }}</span>
+                                    </div>
+                                    <div class="two pl-0 pr-3 py-2 align-self-stretch">
+                                        <span class="yr">{{ object.created_date.year }}</span>
+                                        <span class="mos">{{ object.created_date|date:'F' }}</span>
+                                    </div>
+                                </div>
+                                <h3 class="heading mb-3"><a href="{% url 'article:detail' object.slug %}">{{ object.title }}</a></h3>
+                                <p>{{ object.content|safe|slice:":80" }}...</p>
+                                <p><a href="{% url 'article:detail' object.slug %}" class="btn-custom"><span class="ion-ios-arrow-round-forward mr-3"></span>Read
+                                    more</a></p>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            {% include 'paginator.html' %}
+        </div>
+    </section>
+{% endblock %}
