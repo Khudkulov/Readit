@@ -42,7 +42,7 @@
                     {% endfor %}
                     <div class="tag-widget post-tag-container mb-5 mt-5">
                         <div class="tagcloud">
-                            {% for tag in tags.all %}
+                            {% for tag in object.tags.all %}
 
                                 <a href="{% url 'article:list' %}?tag={{ tag.title }}" class="tag-cloud-link">{{ tag.title }}</a>
                             {% endfor %}
